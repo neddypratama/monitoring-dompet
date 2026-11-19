@@ -4,7 +4,6 @@ import {
   ShieldCheck,
   Activity,
   UserCheck,
-  UserX,
   CreditCard,
   ArrowRightLeft,
   CircleDollarSign,
@@ -14,7 +13,8 @@ import {
   CheckCircle2,
   Lock,
   Unlock,
-  Shield
+  Shield,
+  Clock
 } from 'lucide-react';
 import { apiRequest, formatRupiah } from '../api/client';
 import { AdminStats, AdminUserListItem, ActivityLog } from '../types';
@@ -403,16 +403,16 @@ export const AdminPage: React.FC = () => {
                           {u.created_at.substring(0, 10)}
                         </td>
 
-                        <td className="py-4 px-6 text-center">
+                        <td className="py-4 px-6 text-center whitespace-nowrap">
                           {u.is_active === 1 ? (
-                            <span className="inline-flex items-center space-x-1 text-emerald-600 text-xs font-semibold">
+                            <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">
                               <UserCheck className="w-3.5 h-3.5" />
                               <span>Aktif</span>
                             </span>
                           ) : (
-                            <span className="inline-flex items-center space-x-1 text-rose-600 text-xs font-semibold">
-                              <UserX className="w-3.5 h-3.5" />
-                              <span>Nonaktif</span>
+                            <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                              <Clock className="w-3.5 h-3.5 text-amber-600" />
+                              <span>Menunggu Aktivasi</span>
                             </span>
                           )}
                         </td>
@@ -429,19 +429,27 @@ export const AdminPage: React.FC = () => {
                               {u.role === 'admin' ? 'Jadikan User' : 'Jadikan Admin'}
                             </button>
 
-                            {/* Status Toggle */}
-                            <button
-                              onClick={() => handleToggleStatus(u)}
-                              disabled={isActionLoading || isSelf}
-                              title={isSelf ? 'Tidak dapat menonaktifkan akun sendiri' : u.is_active === 1 ? 'Nonaktifkan' : 'Aktifkan'}
-                              className={`p-1.5 rounded-lg border transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${
-                                u.is_active === 1
-                                  ? 'border-rose-200 text-rose-600 hover:bg-rose-50'
-                                  : 'border-emerald-200 text-emerald-600 hover:bg-emerald-50'
-                              }`}
-                            >
-                              {u.is_active === 1 ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
-                            </button>
+                            {/* Status Toggle / Activate */}
+                            {u.is_active === 1 ? (
+                              <button
+                                onClick={() => handleToggleStatus(u)}
+                                disabled={isActionLoading || isSelf}
+                                title={isSelf ? 'Tidak dapat menonaktifkan akun sendiri' : 'Nonaktifkan Akun'}
+                                className="p-1.5 rounded-lg border border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                              >
+                                <Lock className="w-3.5 h-3.5" />
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => handleToggleStatus(u)}
+                                disabled={isActionLoading}
+                                title="Klik untuk mengaktifkan akun pengguna ini"
+                                className="flex items-center space-x-1 px-3 py-1 rounded-lg border border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-xs font-bold transition-all shadow-2xs"
+                              >
+                                <Unlock className="w-3.5 h-3.5 text-emerald-600" />
+                                <span>Aktifkan</span>
+                              </button>
+                            )}
                           </div>
                         </td>
                       </tr>

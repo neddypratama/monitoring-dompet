@@ -76,8 +76,13 @@ final class AdminService
             }
         }
 
-        $update = $pdo->prepare('UPDATE users SET role = ? WHERE id = ?');
-        $update->execute([$newRole, $targetUserId]);
+        if ($newRole === 'admin') {
+            $update = $pdo->prepare('UPDATE users SET role = ?, is_active = 1 WHERE id = ?');
+            $update->execute([$newRole, $targetUserId]);
+        } else {
+            $update = $pdo->prepare('UPDATE users SET role = ? WHERE id = ?');
+            $update->execute([$newRole, $targetUserId]);
+        }
 
         ActivityLogService::log(
             $pdo,

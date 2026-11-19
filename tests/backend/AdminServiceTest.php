@@ -19,8 +19,12 @@ final class AdminServiceTest extends TestCase
     public function testGetStatsReturnsAggregatedMetrics(): void
     {
         $admin = AuthService::register($this->pdo, 'admin1', 'Admin Satu', 'pass123');
+        $adminId = (int)$admin['user']['id'];
         $user1 = AuthService::register($this->pdo, 'user1', 'User Satu', 'pass123');
         $u1Id = (int)$user1['user']['id'];
+
+        // Admin activates user1
+        AdminService::toggleStatus($this->pdo, $adminId, $u1Id, 1);
 
         // Create a wallet and transaction
         $this->pdo->prepare('INSERT INTO wallets (user_id, name, type, balance) VALUES (?, "Dompet Test", "cash", 500000)')->execute([$u1Id]);

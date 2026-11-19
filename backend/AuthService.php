@@ -40,20 +40,35 @@ final class AuthService
 
         $userCount = (int)$pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
         $role = $userCount === 0 ? 'admin' : 'user';
+        $isActive = $userCount === 0 ? 1 : 0; // User pertama otomatis admin & aktif, user berikutnya menunggu aktivasi admin
 
         $hash = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare('INSERT INTO users (username, full_name, password_hash, role, is_active) VALUES (?, ?, ?, ?, 1)');
-        $stmt->execute([$cleanUser, $cleanName, $hash, $role]);
+        $stmt = $pdo->prepare('INSERT INTO users (username, full_name, password_hash, role, is_active) VALUES (?, ?, ?, ?, ?)');
+        $stmt->execute([$cleanUser, $cleanName, $hash, $role, $isActive]);
         $userId = (int) $pdo->lastInsertId();
 
         self::seedDefaultCategories($pdo, $userId);
 
-        ActivityLogService::log($pdo, $userId, 'auth.register', "Pengguna {$cleanUser} terdaftar sebagai {$role}");
-
-        $token = self::createSession($pdo, $userId);
         $user = self::getUserById($pdo, $userId);
 
-        return ['user' => $user, 'token' => $token];
+        if ($isActive === 1) {
+            ActivityLogService::log($pdo, $userId, 'auth.register', "Pengguna {$cleanUser} terdaftar sebagai {$role} (Aktif)");
+            $token = self::createSession($pdo, $userId);
+            return [
+                'user' => $user,
+                'token' => $token,
+                'requires_approval' => false,
+                'message' => 'Pendaftaran berhasil! Anda telah masuk.',
+            ];
+        }
+
+        ActivityLogService::log($pdo, $userId, 'auth.register', "Pengguna baru {$cleanUser} terdaftar (Menunggu aktivasi Administrator)");
+        return [
+            'user' => $user,
+            'token' => null,
+            'requires_approval' => true,
+            'message' => 'Pendaftaran berhasil! Akun Anda saat ini menunggu persetujuan dan aktivasi oleh Administrator.',
+        ];
     }
 
     /**
@@ -73,8 +88,8 @@ final class AuthService
         $userId = (int) $user['id'];
 
         if ((int)($user['is_active'] ?? 1) === 0) {
-            ActivityLogService::log($pdo, $userId, 'auth.login_failed', "Upaya login ditolak: akun {$cleanUser} dinonaktifkan");
-            throw new InvalidArgumentException('Akun Anda telah dinonaktifkan oleh Administrator.');
+            ActivityLogService::log($pdo, $userId, 'auth.login_failed', "Upaya login ditolak: akun {$cleanUser} masih belum aktif / dinonaktifkan");
+            throw new InvalidArgumentException('Akun Anda masih belum aktif / dinonaktifkan oleh Administrator.');
         }
 
         $token = self::createSession($pdo, $userId);

@@ -53,8 +53,12 @@ final class RoleAuthTest extends TestCase
     {
         AuthService::register($this->pdo, 'admin2', 'Admin 2', 'pass123');
         $reg = AuthService::register($this->pdo, 'useractive', 'Active User', 'pass123');
-        $token = $reg['token'];
         $userId = (int) $reg['user']['id'];
+
+        // Activate user and login to get valid token
+        $this->pdo->prepare('UPDATE users SET is_active = 1 WHERE id = ?')->execute([$userId]);
+        $login = AuthService::login($this->pdo, 'useractive', 'pass123');
+        $token = $login['token'];
 
         // Valid while active
         $valid = AuthService::validateToken($this->pdo, $token);
@@ -67,6 +71,19 @@ final class RoleAuthTest extends TestCase
         // Token must become invalid
         $invalid = AuthService::validateToken($this->pdo, $token);
         $this->assertNull($invalid);
+    }
+
+    public function testNewUserIsInactiveUntilActivatedByAdmin(): void
+    {
+        $admin = AuthService::register($this->pdo, 'adminowner', 'Admin Owner', 'pass123');
+        $this->assertSame(1, (int)$admin['user']['is_active']);
+        $this->assertFalse($admin['requires_approval']);
+        $this->assertNotNull($admin['token']);
+
+        $user = AuthService::register($this->pdo, 'newmember', 'New Member', 'pass123');
+        $this->assertSame(0, (int)$user['user']['is_active']);
+        $this->assertTrue($user['requires_approval']);
+        $this->assertNull($user['token']);
     }
 
     public function testRegisterAndLoginCreateActivityLogs(): void

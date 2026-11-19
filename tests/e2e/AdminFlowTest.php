@@ -26,16 +26,17 @@ final class AdminFlowTest extends TestCase
         $adminId = (int)$adminReg['user']['id'];
         $this->assertSame('admin', $adminReg['user']['role']);
 
-        // 2. Second user registers -> must be regular user
+        // 2. Second user registers -> must be regular user (is_active = 0, waiting admin approval)
         $userReg = AuthService::register($this->pdo, 'staffuser', 'Staff User', 'staffpassword123');
-        $userToken = $userReg['token'];
         $userId = (int)$userReg['user']['id'];
         $this->assertSame('user', $userReg['user']['role']);
+        $this->assertSame(0, (int)$userReg['user']['is_active']);
+        $this->assertTrue($userReg['requires_approval']);
 
-        // 3. Admin retrieves platform stats
+        // 3. Admin retrieves platform stats (total 2 users, 1 active admin, 1 pending)
         $stats = AdminService::getStats($this->pdo);
         $this->assertSame(2, $stats['total_users']);
-        $this->assertSame(2, $stats['active_users']);
+        $this->assertSame(1, $stats['active_users']);
         $this->assertSame(1, $stats['admin_users']);
 
         // 4. Admin lists users
@@ -49,6 +50,10 @@ final class AdminFlowTest extends TestCase
         // Verify stats now reflect 2 admins
         $stats2 = AdminService::getStats($this->pdo);
         $this->assertSame(2, $stats2['admin_users']);
+
+        // Staff user logs in as active admin
+        $staffLogin = AuthService::login($this->pdo, 'staffuser', 'staffpassword123');
+        $userToken = $staffLogin['token'];
 
         // 6. Admin deactivates staffuser
         $deactivated = AdminService::toggleStatus($this->pdo, $adminId, $userId, 0);

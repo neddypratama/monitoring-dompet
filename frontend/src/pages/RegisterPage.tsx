@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Wallet, Lock, User, ArrowRight, AlertCircle, Loader2, Sparkles } from 'lucide-react';
+import { Wallet, Lock, User, ArrowRight, AlertCircle, Loader2, Sparkles, Clock, CheckCircle2 } from 'lucide-react';
 import { apiRequest } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 
@@ -14,6 +14,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) =
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [pendingApprovalUser, setPendingApprovalUser] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +39,12 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) =
           password,
         }),
       });
+
+      if (res?.requires_approval || !res?.token) {
+        setPendingApprovalUser(username.trim());
+        return;
+      }
+
       login(res.token, res.user);
     } catch (err: any) {
       setError(err.message || 'Gagal mendaftar akun.');
@@ -45,6 +52,41 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) =
       setIsLoading(false);
     }
   };
+
+  if (pendingApprovalUser) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex items-center justify-center p-4">
+        <div className="w-full max-w-md bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/20 text-center space-y-5 animate-in fade-in zoom-in-95 duration-200">
+          <div className="w-16 h-16 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto shadow-lg shadow-amber-200/50">
+            <Clock className="w-8 h-8" />
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-extrabold text-slate-900">Pendaftaran Berhasil!</h2>
+            <div className="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-xl p-3.5 mt-3 text-left space-y-1">
+              <p className="font-bold flex items-center space-x-1.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 inline shrink-0" />
+                <span>Akun @{pendingApprovalUser} telah terdaftar.</span>
+              </p>
+              <p className="text-slate-600 leading-relaxed pt-1">
+                Demi keamanan sistem, akun baru memerlukan <strong>persetujuan dan aktivasi oleh Administrator</strong> sebelum Anda dapat melakukan login.
+              </p>
+            </div>
+            <p className="text-xs text-slate-500 mt-4 leading-relaxed">
+              Silakan hubungi Administrator Anda untuk mengaktifkan akun ini.
+            </p>
+          </div>
+
+          <button
+            onClick={onSwitchToLogin}
+            className="w-full py-3.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md shadow-indigo-200 transition-all hover:scale-[1.01]"
+          >
+            Kembali ke Halaman Masuk
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex items-center justify-center p-4">

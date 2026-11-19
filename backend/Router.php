@@ -79,7 +79,13 @@ final class Router
                 (string)($input['full_name'] ?? ''),
                 (string)($input['password'] ?? '')
             );
-            self::json(['success' => true, 'data' => $res], 201);
+            $statusCode = !empty($res['requires_approval']) ? 200 : 201;
+            self::json([
+                'success' => true,
+                'data' => $res,
+                'requires_approval' => !empty($res['requires_approval']),
+                'message' => $res['message'] ?? 'Pendaftaran berhasil.'
+            ], $statusCode);
             return;
         }
 
