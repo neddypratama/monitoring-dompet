@@ -1,0 +1,31 @@
+Options -Indexes
+
+DirectoryIndex index.php index.html
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Izinkan akses langsung ke file/folder fisik (seperti dist/assets, dll)
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Rewrite rute /api/... ke api.php
+    RewriteRule ^api(/.*)?$ api.php [L,QSA]
+
+    # Rewrite rute halaman SPA lainnya ke index.php
+    RewriteRule ^ index.php [L,QSA]
+</IfModule>
+
+# Keamanan: Blokir akses langsung ke folder sensitif & file database SQLite
+<IfModule mod_alias.c>
+    RedirectMatch 403 ^/\.git
+    RedirectMatch 403 ^/(backend|tests|docs|frontend)(/|$)
+    RedirectMatch 403 \.(sqlite|sqlite-wal|sqlite-shm|sqlite-journal|sh|md|lock)$
+</IfModule>
+
+<IfModule mod_authz_core.c>
+    <FilesMatch "^(\.htaccess|\.gitignore|deploy\.sh)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>
