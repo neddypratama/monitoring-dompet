@@ -23,7 +23,7 @@ final class Router
         // CORS Headers
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-        header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+        header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, X-Authorization');
 
         if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
             http_response_code(200);
@@ -493,7 +493,16 @@ final class Router
         if (function_exists('getallheaders')) {
             $headers = getallheaders();
         }
-        $auth = $headers['Authorization'] ?? $headers['authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+        $auth = $headers['Authorization'] 
+            ?? $headers['authorization'] 
+            ?? $headers['X-Authorization'] 
+            ?? $headers['x-authorization'] 
+            ?? $_SERVER['HTTP_AUTHORIZATION'] 
+            ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] 
+            ?? $_SERVER['HTTP_X_AUTHORIZATION'] 
+            ?? $_SERVER['REDIRECT_HTTP_X_AUTHORIZATION'] 
+            ?? '';
+
         if (preg_match('/Bearer\s+(\S+)/i', $auth, $m)) {
             return trim($m[1]);
         }

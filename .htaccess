@@ -1,9 +1,14 @@
 Options -Indexes
+CGIPassAuth On
 
 DirectoryIndex index.php index.html
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
+
+    # Pass Authorization header to PHP in Apache / FastCGI
+    RewriteCond %{HTTP:Authorization} .+
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
     # Izinkan akses langsung ke file/folder fisik (seperti dist/assets, dll)
     RewriteCond %{REQUEST_FILENAME} -f [OR]
