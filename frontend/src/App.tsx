@@ -35,19 +35,22 @@ const MainApp: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col pb-20 md:pb-8">
+    <div className="min-h-screen bg-slate-50 flex flex-col lg:flex-row">
       <Navbar currentTab={currentTab} onTabChange={setCurrentTab} />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {currentTab === 'dashboard' && <DashboardPage onNavigate={setCurrentTab} />}
-        {currentTab === 'wallets' && <WalletsPage />}
-        {currentTab === 'transactions' && <TransactionsPage />}
-        {currentTab === 'debts' && <DebtsPage />}
-        {currentTab === 'scan' && <ScanReceiptPage onNavigate={setCurrentTab} />}
-        {currentTab === 'budgets' && <BudgetsGoalsPage />}
-        {currentTab === 'settings' && <SettingsPage />}
-        {currentTab === 'admin' && user?.role === 'admin' && <AdminPage />}
-      </main>
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col lg:pl-64 min-w-0 pb-20 sm:pb-8">
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          {currentTab === 'dashboard' && <DashboardPage onNavigate={setCurrentTab} />}
+          {currentTab === 'wallets' && <WalletsPage />}
+          {currentTab === 'transactions' && <TransactionsPage />}
+          {currentTab === 'debts' && <DebtsPage />}
+          {currentTab === 'scan' && <ScanReceiptPage onNavigate={setCurrentTab} />}
+          {currentTab === 'budgets' && <BudgetsGoalsPage />}
+          {currentTab === 'settings' && <SettingsPage />}
+          {currentTab === 'admin' && user?.role === 'admin' && <AdminPage />}
+        </main>
+      </div>
     </div>
   );
 };
