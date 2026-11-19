@@ -13,6 +13,8 @@ require_once __DIR__ . '/ReceiptService.php';
 require_once __DIR__ . '/BudgetService.php';
 require_once __DIR__ . '/GoalService.php';
 require_once __DIR__ . '/DashboardService.php';
+require_once __DIR__ . '/ActivityLogService.php';
+require_once __DIR__ . '/AdminService.php';
 
 final class Router
 {
@@ -105,6 +107,49 @@ final class Router
                 AuthService::logout($pdo, $token);
             }
             self::json(['success' => true, 'message' => 'Berhasil logout.']);
+            return;
+        }
+
+        // Admin Protected Routes
+        if (str_starts_with($path, '/api/admin')) {
+            self::requireAdmin($user);
+
+            if ($method === 'GET' && $path === '/api/admin/stats') {
+                self::json(['success' => true, 'data' => AdminService::getStats($pdo)]);
+                return;
+            }
+
+            if ($method === 'GET' && $path === '/api/admin/users') {
+                self::json(['success' => true, 'data' => AdminService::listUsers($pdo)]);
+                return;
+            }
+
+            if ($method === 'PUT' && preg_match('#^/api/admin/users/(\d+)/role$#', $path, $m)) {
+                $targetUserId = (int)$m[1];
+                $newRole = (string)($input['role'] ?? '');
+                $res = AdminService::updateRole($pdo, $userId, $targetUserId, $newRole);
+                self::json(['success' => true, 'data' => $res, 'message' => 'Role pengguna berhasil diperbarui.']);
+                return;
+            }
+
+            if ($method === 'PUT' && preg_match('#^/api/admin/users/(\d+)/status$#', $path, $m)) {
+                $targetUserId = (int)$m[1];
+                $newStatus = (int)($input['is_active'] ?? 1);
+                $res = AdminService::toggleStatus($pdo, $userId, $targetUserId, $newStatus);
+                self::json(['success' => true, 'data' => $res, 'message' => 'Status pengguna berhasil diperbarui.']);
+                return;
+            }
+
+            if ($method === 'GET' && $path === '/api/admin/logs') {
+                $search = isset($_GET['search']) ? (string)$_GET['search'] : null;
+                $limit = isset($_GET['limit']) ? max(1, (int)$_GET['limit']) : 100;
+                $offset = isset($_GET['offset']) ? max(0, (int)$_GET['offset']) : 0;
+                $logs = ActivityLogService::listLogs($pdo, $limit, $offset, $search);
+                self::json(['success' => true, 'data' => $logs]);
+                return;
+            }
+
+            self::json(['success' => false, 'message' => 'Admin route not found.'], 404);
             return;
         }
 
@@ -427,6 +472,14 @@ final class Router
             return null;
         }
         return AuthService::validateToken($pdo, $token);
+    }
+
+    private static function requireAdmin(array $user): void
+    {
+        if (($user['role'] ?? 'user') !== 'admin') {
+            self::json(['success' => false, 'message' => 'Forbidden. Hanya Administrator yang dapat mengakses menu ini.'], 403);
+            exit;
+        }
     }
 
     private static function getBearerToken(): ?string
