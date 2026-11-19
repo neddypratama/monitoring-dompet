@@ -10,6 +10,7 @@ import { DebtsPage } from './pages/DebtsPage';
 import { ScanReceiptPage } from './pages/ScanReceiptPage';
 import { BudgetsGoalsPage } from './pages/BudgetsGoalsPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { AdminPage } from './pages/AdminPage';
 import { Loader2 } from 'lucide-react';
 
 const MainApp: React.FC = () => {
@@ -45,6 +46,7 @@ const MainApp: React.FC = () => {
         {currentTab === 'scan' && <ScanReceiptPage onNavigate={setCurrentTab} />}
         {currentTab === 'budgets' && <BudgetsGoalsPage />}
         {currentTab === 'settings' && <SettingsPage />}
+        {currentTab === 'admin' && user?.role === 'admin' && <AdminPage />}
       </main>
     </div>
   );

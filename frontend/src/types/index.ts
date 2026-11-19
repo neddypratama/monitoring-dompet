@@ -2,7 +2,42 @@ export interface User {
   id: number;
   username: string;
   full_name: string;
+  role: 'admin' | 'user';
+  is_active?: number;
   created_at: string;
+}
+
+export interface AdminUserListItem {
+  id: number;
+  username: string;
+  full_name: string;
+  role: 'admin' | 'user';
+  is_active: number;
+  created_at: string;
+  total_wallets: number;
+  total_transactions: number;
+}
+
+export interface ActivityLog {
+  id: number;
+  user_id?: number | null;
+  username?: string | null;
+  full_name?: string | null;
+  role?: string | null;
+  action: string;
+  details: string;
+  ip_address: string;
+  user_agent: string;
+  created_at: string;
+}
+
+export interface AdminStats {
+  total_users: number;
+  active_users: number;
+  admin_users: number;
+  total_wallets: number;
+  total_transactions: number;
+  total_volume: number;
 }
 
 export interface Wallet {

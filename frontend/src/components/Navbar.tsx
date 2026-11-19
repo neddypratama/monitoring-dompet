@@ -6,11 +6,12 @@ import {
   Target,
   Settings,
   LogOut,
-  Camera
+  Camera,
+  ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-export type TabType = 'dashboard' | 'wallets' | 'transactions' | 'debts' | 'scan' | 'budgets' | 'settings';
+export type TabType = 'dashboard' | 'wallets' | 'transactions' | 'debts' | 'scan' | 'budgets' | 'settings' | 'admin';
 
 interface NavbarProps {
   currentTab: TabType;
@@ -27,6 +28,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onTabChange }) => {
     { id: 'budgets' as TabType, label: 'Anggaran & Target', icon: Target },
     { id: 'settings' as TabType, label: 'Pengaturan', icon: Settings },
   ];
+
+  if (user?.role === 'admin') {
+    navItems.push({ id: 'admin' as TabType, label: 'Panel Admin', icon: ShieldCheck });
+  }
 
   return (
     <>
@@ -84,9 +89,16 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onTabChange }) => {
 
               <div className="flex items-center space-x-2">
                 <div className="text-right">
-                  <p className="text-xs font-semibold text-slate-800 leading-tight">
-                    {user?.full_name || user?.username}
-                  </p>
+                  <div className="flex items-center space-x-1.5 justify-end">
+                    <p className="text-xs font-semibold text-slate-800 leading-tight">
+                      {user?.full_name || user?.username}
+                    </p>
+                    {user?.role === 'admin' && (
+                      <span className="px-1.5 py-0.2 text-[9px] font-extrabold rounded-full bg-purple-100 text-purple-700 uppercase tracking-wider">
+                        Admin
+                      </span>
+                    )}
+                  </div>
                   <p className="text-[10px] text-slate-400 leading-tight">
                     @{user?.username}
                   </p>
