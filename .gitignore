@@ -1,0 +1,13 @@
+/vendor
+/storage/*.sqlite
+/storage/*.sqlite-shm
+/storage/*.sqlite-wal
+/storage/receipts/*
+!/storage/receipts/.gitkeep
+/dist
+node_modules
+frontend/node_modules
+.DS_Store
+*.log
+.superpowers
+.phpunit.result.cache
