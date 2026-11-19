@@ -125,12 +125,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToRegister }) => {
             </button>
           </p>
         </div>
-
-        <div className="mt-4 p-3 bg-slate-50 border border-slate-200/80 rounded-xl text-center">
-          <p className="text-[11px] text-slate-500 font-medium">
-            Akun bawaan Administrator: <span className="font-bold text-slate-800">admin</span> &bull; Password: <span className="font-bold text-slate-800">admin123</span>
-          </p>
-        </div>
       </div>
     </div>
   );
