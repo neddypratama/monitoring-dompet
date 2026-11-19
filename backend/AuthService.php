@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/ActivityLogService.php';
+
 final class AuthService
 {
     public const SESSION_DAYS = 30;
@@ -36,12 +38,17 @@ final class AuthService
             throw new InvalidArgumentException("Username '{$cleanUser}' sudah digunakan. Pilih username lain.");
         }
 
+        $userCount = (int)$pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
+        $role = $userCount === 0 ? 'admin' : 'user';
+
         $hash = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare('INSERT INTO users (username, full_name, password_hash) VALUES (?, ?, ?)');
-        $stmt->execute([$cleanUser, $cleanName, $hash]);
+        $stmt = $pdo->prepare('INSERT INTO users (username, full_name, password_hash, role, is_active) VALUES (?, ?, ?, ?, 1)');
+        $stmt->execute([$cleanUser, $cleanName, $hash, $role]);
         $userId = (int) $pdo->lastInsertId();
 
         self::seedDefaultCategories($pdo, $userId);
+
+        ActivityLogService::log($pdo, $userId, 'auth.register', "Pengguna {$cleanUser} terdaftar sebagai {$role}");
 
         $token = self::createSession($pdo, $userId);
         $user = self::getUserById($pdo, $userId);
@@ -64,13 +71,24 @@ final class AuthService
         }
 
         $userId = (int) $user['id'];
+
+        if ((int)($user['is_active'] ?? 1) === 0) {
+            ActivityLogService::log($pdo, $userId, 'auth.login_failed', "Upaya login ditolak: akun {$cleanUser} dinonaktifkan");
+            throw new InvalidArgumentException('Akun Anda telah dinonaktifkan oleh Administrator.');
+        }
+
         $token = self::createSession($pdo, $userId);
+        $role = (string)($user['role'] ?? 'user');
+
+        ActivityLogService::log($pdo, $userId, 'auth.login', "Pengguna {$cleanUser} ({$role}) berhasil login");
 
         return [
             'user' => [
                 'id' => $userId,
                 'username' => $user['username'],
                 'full_name' => $user['full_name'],
+                'role' => $role,
+                'is_active' => (int)($user['is_active'] ?? 1),
                 'created_at' => $user['created_at'],
             ],
             'token' => $token,
@@ -85,7 +103,7 @@ final class AuthService
         }
 
         $stmt = $pdo->prepare(
-            'SELECT u.id, u.username, u.full_name, u.created_at 
+            'SELECT u.id, u.username, u.full_name, u.role, u.is_active, u.created_at 
              FROM user_sessions s 
              JOIN users u ON u.id = s.user_id 
              WHERE s.token = ? AND datetime(s.expires_at) > datetime("now", "localtime") 
@@ -94,7 +112,11 @@ final class AuthService
         $stmt->execute([$cleanToken]);
         $row = $stmt->fetch();
 
-        return $row ?: null;
+        if (!$row || (int)($row['is_active'] ?? 1) === 0) {
+            return null;
+        }
+
+        return $row;
     }
 
     public static function logout(PDO $pdo, string $token): void
@@ -114,7 +136,7 @@ final class AuthService
 
     public static function getUserById(PDO $pdo, int $userId): array
     {
-        $stmt = $pdo->prepare('SELECT id, username, full_name, created_at FROM users WHERE id = ? LIMIT 1');
+        $stmt = $pdo->prepare('SELECT id, username, full_name, role, is_active, created_at FROM users WHERE id = ? LIMIT 1');
         $stmt->execute([$userId]);
         $row = $stmt->fetch();
         if (!$row) {
