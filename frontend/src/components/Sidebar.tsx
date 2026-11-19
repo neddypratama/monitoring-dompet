@@ -10,9 +10,11 @@ import {
   Camera,
   LogOut,
   Menu,
-  X
+  X,
+  Smartphone
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { DownloadAppModal } from './DownloadAppModal';
 
 export type TabType =
   | 'dashboard'
@@ -32,6 +34,8 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onTabChange }) => {
   const { user, logout } = useAuth();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+  const [downloadModalTab, setDownloadModalTab] = useState<'android' | 'ios'>('android');
 
   const navItems = [
     { id: 'dashboard' as TabType, label: 'Dashboard', icon: LayoutDashboard },
@@ -140,6 +144,30 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onTabChange }) => 
               <NavLinkContent key={item.id} item={item} />
             ))}
           </div>
+
+          {/* Mobile App Download Card */}
+          <div className="mt-auto pt-4">
+            <div className="p-3.5 rounded-2xl bg-gradient-to-br from-indigo-50/80 to-blue-50/80 border border-indigo-100 shadow-2xs">
+              <div className="flex items-center space-x-2 text-indigo-900 font-bold text-xs mb-1">
+                <Smartphone className="w-4 h-4 text-indigo-600" />
+                <span>Aplikasi Android & iOS</span>
+              </div>
+              <p className="text-[11px] text-slate-500 mb-2 leading-tight">
+                Gunakan DompetKu di HP Anda dengan tampilan fullscreen.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setDownloadModalTab('android');
+                  setIsDownloadModalOpen(true);
+                }}
+                className="w-full py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold transition-all shadow-xs flex items-center justify-center space-x-1.5 cursor-pointer"
+              >
+                <Smartphone className="w-3.5 h-3.5" />
+                <span>Download / Pasang App</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Bottom: User Card & Logout */}
@@ -195,6 +223,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onTabChange }) => 
         </div>
 
         <div className="flex items-center space-x-2">
+          {/* Mobile App Download Button */}
+          <button
+            type="button"
+            onClick={() => {
+              setDownloadModalTab('android');
+              setIsDownloadModalOpen(true);
+            }}
+            title="Download / Pasang Aplikasi Mobile"
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg border border-indigo-200 bg-indigo-50/70 hover:bg-indigo-100 text-indigo-700 text-xs font-bold transition-colors cursor-pointer"
+          >
+            <Smartphone className="w-3.5 h-3.5 text-indigo-600" />
+            <span className="text-[11px]">App Mobile</span>
+          </button>
+
           {/* Quick Scan Button */}
           <button
             onClick={() => handleSelectTab('scan')}
@@ -330,6 +372,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onTabChange }) => 
           <span className="text-[10px] mt-0.5">Lainnya</span>
         </button>
       </nav>
+
+      {/* Download App Modal */}
+      <DownloadAppModal
+        isOpen={isDownloadModalOpen}
+        onClose={() => setIsDownloadModalOpen(false)}
+        defaultTab={downloadModalTab}
+      />
     </>
   );
 };

@@ -11,8 +11,10 @@ import {
   EyeOff,
   User,
   ShieldCheck,
-  Smartphone
+  Smartphone,
+  Apple
 } from 'lucide-react';
+import { DownloadAppModal } from '../components/DownloadAppModal';
 
 export const SettingsPage: React.FC = () => {
   const { user } = useAuth();
@@ -33,6 +35,8 @@ export const SettingsPage: React.FC = () => {
   const [isExporting, setIsExporting] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const [isDownloadOpen, setIsDownloadOpen] = useState<boolean>(false);
+  const [downloadTab, setDownloadTab] = useState<'android' | 'ios'>('android');
 
   useEffect(() => {
     async function loadSettings() {
@@ -385,22 +389,25 @@ export const SettingsPage: React.FC = () => {
             </button>
           </div>
 
-          {/* Android Mobile App Section */}
-          <div className="bg-gradient-to-br from-indigo-50/70 via-white to-blue-50/70 rounded-3xl p-6 border border-indigo-100/80 shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          {/* Mobile App Section (Android & iOS) */}
+          <div className="bg-gradient-to-br from-indigo-50/70 via-white to-blue-50/70 rounded-3xl p-6 border border-indigo-100/80 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="flex items-start space-x-3.5">
               <div className="w-11 h-11 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-indigo-200">
                 <Smartphone className="w-6 h-6" />
               </div>
               <div>
                 <h3 className="text-base font-extrabold text-slate-900">
-                  Aplikasi Android (APK & PWA)
+                  Aplikasi Mobile (Android & iOS)
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Gunakan DompetKu langsung di HP Android Anda seperti aplikasi asli dengan instalasi APK atau PWA.
+                  Pasang DompetKu di smartphone Android atau iPhone Anda layaknya aplikasi native dengan tampilan fullscreen & akses kamera scan struk.
                 </p>
                 <div className="flex flex-wrap items-center gap-2 mt-2">
                   <span className="inline-flex items-center text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-                    ✓ Full Screen (Tanpa Bar Browser)
+                    ✓ Android (APK & PWA)
+                  </span>
+                  <span className="inline-flex items-center text-[11px] font-semibold text-slate-800 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
+                    ✓ Apple iOS (iPhone / iPad PWA)
                   </span>
                   <span className="inline-flex items-center text-[11px] font-semibold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-200">
                     ✓ Akses Kamera Scan Struk
@@ -409,17 +416,41 @@ export const SettingsPage: React.FC = () => {
               </div>
             </div>
 
-            <a
-              href="/DompetKu.apk"
-              download="DompetKu.apk"
-              className="flex items-center space-x-2 px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold transition-all shadow-md shadow-emerald-200 hover:scale-[1.02] shrink-0"
-            >
-              <Download className="w-4 h-4" />
-              <span>Download APK Android</span>
-            </a>
+            <div className="flex flex-wrap items-center gap-2.5 shrink-0 w-full md:w-auto">
+              <button
+                type="button"
+                onClick={() => {
+                  setDownloadTab('android');
+                  setIsDownloadOpen(true);
+                }}
+                className="flex-1 md:flex-none flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold transition-all shadow-md shadow-emerald-200 hover:scale-[1.02] cursor-pointer"
+              >
+                <Smartphone className="w-4 h-4" />
+                <span>Android (APK)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setDownloadTab('ios');
+                  setIsDownloadOpen(true);
+                }}
+                className="flex-1 md:flex-none flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold transition-all shadow-md shadow-slate-300 hover:scale-[1.02] cursor-pointer"
+              >
+                <Apple className="w-4 h-4" />
+                <span>iPhone (iOS)</span>
+              </button>
+            </div>
           </div>
         </form>
       )}
+
+      {/* Download App Modal */}
+      <DownloadAppModal
+        isOpen={isDownloadOpen}
+        onClose={() => setIsDownloadOpen(false)}
+        defaultTab={downloadTab}
+      />
     </div>
   );
 };
