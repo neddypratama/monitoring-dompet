@@ -24,7 +24,10 @@ final class TransactionService
             throw new InvalidArgumentException("Tipe transaksi '{$type}' tidak valid.");
         }
 
-        $pdo->beginTransaction();
+        $isRootTx = !$pdo->inTransaction();
+        if ($isRootTx) {
+            $pdo->beginTransaction();
+        }
         try {
             // Apply wallet balance change
             if ($type === 'income' || $type === 'receivable_settlement' || $type === 'debt_receipt') {
@@ -40,11 +43,13 @@ final class TransactionService
             $stmt->execute([$userId, $walletId, $categoryId, $type, $amount, $date, $notes, $receiptId]);
             $txId = (int)$pdo->lastInsertId();
 
-            $pdo->commit();
+            if ($isRootTx) {
+                $pdo->commit();
+            }
 
             return self::getById($pdo, $userId, $txId) ?? [];
         } catch (\Throwable $e) {
-            if ($pdo->inTransaction()) {
+            if ($isRootTx && $pdo->inTransaction()) {
                 $pdo->rollBack();
             }
             throw $e;

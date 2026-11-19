@@ -119,7 +119,10 @@ final class WalletService
             throw new InvalidArgumentException("Saldo dompet '{$source['name']}' tidak mencukupi untuk transfer sebesar Rp " . number_format($totalRequired, 0, ',', '.'));
         }
 
-        $pdo->beginTransaction();
+        $isRootTx = !$pdo->inTransaction();
+        if ($isRootTx) {
+            $pdo->beginTransaction();
+        }
         try {
             self::adjustBalance($pdo, $userId, $fromId, -$totalRequired);
             self::adjustBalance($pdo, $userId, $toId, $amount);
@@ -131,7 +134,9 @@ final class WalletService
             $stmt->execute([$userId, $fromId, $toId, $amount, $adminFee, $date ?: date('Y-m-d'), $notes]);
             $txId = (int)$pdo->lastInsertId();
 
-            $pdo->commit();
+            if ($isRootTx) {
+                $pdo->commit();
+            }
 
             return [
                 'id' => $txId,
@@ -143,7 +148,7 @@ final class WalletService
                 'notes' => $notes
             ];
         } catch (\Throwable $e) {
-            if ($pdo->inTransaction()) {
+            if ($isRootTx && $pdo->inTransaction()) {
                 $pdo->rollBack();
             }
             throw $e;
