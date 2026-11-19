@@ -35,9 +35,14 @@ final class Router
         $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
         $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
 
-        // Normalisasi path agar mencakup /api/... terlepas dari subdirektori (misal /monitoring-dompet/api/...)
+        // Normalisasi path agar mencakup /api/... terlepas dari subdirektori (misal /monitoring-dompet/api/... atau /monitoring-dompet/api.php/...)
         $pos = strpos($uri, '/api');
         $apiPath = $pos !== false ? substr($uri, $pos) : $uri;
+
+        // Normalisasi jika path menggunakan /api.php/...
+        if (str_starts_with($apiPath, '/api.php')) {
+            $apiPath = '/api' . substr($apiPath, 8);
+        }
 
         // Strip trailing slash
         $apiPath = rtrim($apiPath, '/');
