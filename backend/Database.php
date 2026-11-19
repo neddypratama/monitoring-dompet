@@ -39,6 +39,8 @@ final class Database
                 username TEXT NOT NULL UNIQUE,
                 full_name TEXT NOT NULL DEFAULT '',
                 password_hash TEXT NOT NULL,
+                role TEXT NOT NULL DEFAULT 'user' CHECK(role IN ('admin', 'user')),
+                is_active INTEGER NOT NULL DEFAULT 1,
                 created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
             );
 
@@ -192,6 +194,26 @@ final class Database
                 setting_value TEXT NOT NULL DEFAULT '',
                 PRIMARY KEY (user_id, setting_key)
             );
+
+            CREATE TABLE IF NOT EXISTS activity_logs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+                action TEXT NOT NULL,
+                details TEXT NOT NULL DEFAULT '',
+                ip_address TEXT NOT NULL DEFAULT '',
+                user_agent TEXT NOT NULL DEFAULT '',
+                created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
+            );
         SQL);
+
+        // Migrasi idempotensi kolom untuk database eksisting
+        $userCols = $pdo->query('PRAGMA table_info(users)')->fetchAll(PDO::FETCH_ASSOC);
+        $colNames = array_column($userCols, 'name');
+        if (!in_array('role', $colNames, true)) {
+            $pdo->exec("ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT 'user'");
+        }
+        if (!in_array('is_active', $colNames, true)) {
+            $pdo->exec("ALTER TABLE users ADD COLUMN is_active INTEGER NOT NULL DEFAULT 1");
+        }
     }
 }
