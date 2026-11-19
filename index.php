@@ -21,7 +21,31 @@ if (strpos($uri, 'storage/receipts/') !== false) {
     }
 }
 
-// 3. Serve Frontend SPA from dist/
+// 3. Serve static assets (JS, CSS, fonts, images) from dist/
+if (strpos($uri, '/assets/') !== false || strpos($uri, '/dist/') !== false) {
+    $filename = basename($uri);
+    $assetPath = __DIR__ . DIRECTORY_SEPARATOR . 'dist' . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . $filename;
+    if (is_file($assetPath)) {
+        $ext = strtolower(pathinfo($assetPath, PATHINFO_EXTENSION));
+        $mimes = [
+            'js' => 'application/javascript; charset=utf-8',
+            'css' => 'text/css; charset=utf-8',
+            'svg' => 'image/svg+xml',
+            'png' => 'image/png',
+            'jpg' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'woff' => 'font/woff',
+            'woff2' => 'font/woff2',
+            'ico' => 'image/x-icon',
+        ];
+        $contentType = $mimes[$ext] ?? mime_content_type($assetPath) ?: 'application/octet-stream';
+        header("Content-Type: {$contentType}");
+        readfile($assetPath);
+        exit;
+    }
+}
+
+// 4. Serve Frontend SPA from dist/
 $distHtml = __DIR__ . DIRECTORY_SEPARATOR . 'dist' . DIRECTORY_SEPARATOR . 'index.html';
 
 if (is_file($distHtml)) {
