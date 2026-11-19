@@ -26,12 +26,12 @@ final class Database
             $pdo->exec('PRAGMA journal_mode = WAL;');
         }
 
-        self::migrate($pdo);
+        self::migrate($pdo, $path !== ':memory:');
 
         return $pdo;
     }
 
-    public static function migrate(PDO $pdo): void
+    public static function migrate(PDO $pdo, bool $autoSeed = false): void
     {
         $pdo->exec(<<<'SQL'
             CREATE TABLE IF NOT EXISTS users (
@@ -214,6 +214,40 @@ final class Database
         }
         if (!in_array('is_active', $colNames, true)) {
             $pdo->exec("ALTER TABLE users ADD COLUMN is_active INTEGER NOT NULL DEFAULT 1");
+        }
+
+        // Auto-seed default admin dan kategori bawaan jika database disk baru (0 user)
+        if ($autoSeed) {
+            $userCount = (int)$pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
+            if ($userCount === 0) {
+                $hash = password_hash('admin123', PASSWORD_DEFAULT);
+                $stmt = $pdo->prepare('INSERT INTO users (username, full_name, password_hash, role, is_active) VALUES (?, ?, ?, ?, 1)');
+                $stmt->execute(['admin', 'Administrator', $hash, 'admin']);
+                $adminId = (int)$pdo->lastInsertId();
+
+                $defaults = [
+                    ['Makanan & Minuman', 'expense', 'utensils', '#ef4444'],
+                    ['Belanja & Minimarket', 'expense', 'shopping-cart', '#f97316'],
+                    ['Transportasi', 'expense', 'car', '#06b6d4'],
+                    ['Tagihan & Utilitas', 'expense', 'receipt', '#8b5cf6'],
+                    ['Hiburan & Hobi', 'expense', 'film', '#ec4899'],
+                    ['Kesehatan', 'expense', 'heart-pulse', '#10b981'],
+                    ['Gaji & Upah', 'income', 'briefcase', '#10b981'],
+                    ['Bonus & Hadiah', 'income', 'gift', '#f59e0b'],
+                    ['Investasi & Bunga', 'income', 'trending-up', '#3b82f6'],
+                    ['Lain-lain', 'expense', 'folder', '#64748b'],
+                ];
+                $catStmt = $pdo->prepare('INSERT INTO categories (user_id, name, type, icon, color, is_default) VALUES (?, ?, ?, ?, ?, 1)');
+                foreach ($defaults as $cat) {
+                    $catStmt->execute([$adminId, $cat[0], $cat[1], $cat[2], $cat[3]]);
+                }
+
+                $pdo->prepare("INSERT INTO wallets (user_id, name, type, balance, color, icon) VALUES (?, 'Dompet Utama', 'bank', 1500000, '#4f46e5', 'wallet')")
+                    ->execute([$adminId]);
+
+                $pdo->prepare("INSERT INTO activity_logs (user_id, action, details) VALUES (?, 'auth.register', 'Akun default Administrator dibuat otomatis saat inisialisasi database')")
+                    ->execute([$adminId]);
+            }
         }
     }
 }
