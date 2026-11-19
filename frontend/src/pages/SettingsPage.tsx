@@ -10,7 +10,8 @@ import {
   Eye,
   EyeOff,
   User,
-  ShieldCheck
+  ShieldCheck,
+  Smartphone
 } from 'lucide-react';
 
 export const SettingsPage: React.FC = () => {
@@ -382,6 +383,40 @@ export const SettingsPage: React.FC = () => {
               {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4 text-indigo-600" />}
               <span>Download Cadangan</span>
             </button>
+          </div>
+
+          {/* Android Mobile App Section */}
+          <div className="bg-gradient-to-br from-indigo-50/70 via-white to-blue-50/70 rounded-3xl p-6 border border-indigo-100/80 shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex items-start space-x-3.5">
+              <div className="w-11 h-11 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-indigo-200">
+                <Smartphone className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-slate-900">
+                  Aplikasi Android (APK & PWA)
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Gunakan DompetKu langsung di HP Android Anda seperti aplikasi asli dengan instalasi APK atau PWA.
+                </p>
+                <div className="flex flex-wrap items-center gap-2 mt-2">
+                  <span className="inline-flex items-center text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                    ✓ Full Screen (Tanpa Bar Browser)
+                  </span>
+                  <span className="inline-flex items-center text-[11px] font-semibold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-200">
+                    ✓ Akses Kamera Scan Struk
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <a
+              href="/DompetKu.apk"
+              download="DompetKu.apk"
+              className="flex items-center space-x-2 px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold transition-all shadow-md shadow-emerald-200 hover:scale-[1.02] shrink-0"
+            >
+              <Download className="w-4 h-4" />
+              <span>Download APK Android</span>
+            </a>
           </div>
         </form>
       )}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Wallet, Lock, User, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
+import { Wallet, Lock, User, ArrowRight, AlertCircle, Loader2, Smartphone } from 'lucide-react';
 import { apiRequest } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 
@@ -124,6 +124,17 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToRegister }) => {
               Daftar Akun Baru
             </button>
           </p>
+
+          <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-center">
+            <a
+              href="/DompetKu.apk"
+              download="DompetKu.apk"
+              className="inline-flex items-center space-x-2 text-xs font-bold text-slate-600 hover:text-indigo-600 bg-slate-50 hover:bg-indigo-50/70 px-3.5 py-2 rounded-xl border border-slate-200 transition-all hover:scale-102"
+            >
+              <Smartphone className="w-4 h-4 text-emerald-600" />
+              <span>Download DompetKu APK (Android)</span>
+            </a>
+          </div>
         </div>
       </div>
     </div>
