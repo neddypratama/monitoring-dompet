@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Receivable, Wallet as WalletType } from '../types';
 import { apiRequest, formatRupiah } from '../api/client';
+import { RupiahInput } from './RupiahInput';
 import { X, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
 interface SettleReceivableModalProps {
@@ -37,7 +38,7 @@ export const SettleReceivableModal: React.FC<SettleReceivableModalProps> = ({
     e.preventDefault();
     setError('');
 
-    const numAmount = parseFloat(amount) || 0;
+    const numAmount = Number(amount) || 0;
     if (numAmount <= 0) {
       setError('Nominal pelunasan harus lebih besar dari 0.');
       return;
@@ -101,15 +102,22 @@ export const SettleReceivableModal: React.FC<SettleReceivableModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-1">Nominal Diterima (Rp)</label>
-            <input
-              type="number"
+            <div className="flex justify-between items-center mb-1">
+              <label className="block text-xs font-bold text-slate-600">Nominal Diterima</label>
+              <button
+                type="button"
+                onClick={() => setAmount(String(receivable.remaining_amount))}
+                className="text-[11px] font-bold text-teal-600 hover:text-teal-700 hover:underline"
+              >
+                Lunasi Semua
+              </button>
+            </div>
+            <RupiahInput
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(val) => setAmount(val ? String(val) : '')}
               placeholder="0"
-              max={receivable.remaining_amount}
               required
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-lg font-bold text-slate-900 focus:border-indigo-500 outline-none"
+              size="lg"
             />
           </div>
 

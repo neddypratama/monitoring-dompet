@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Debt, Wallet as WalletType } from '../types';
 import { apiRequest, formatRupiah } from '../api/client';
+import { RupiahInput } from './RupiahInput';
 import { X, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
 interface PayDebtModalProps {
@@ -37,7 +38,7 @@ export const PayDebtModal: React.FC<PayDebtModalProps> = ({
     e.preventDefault();
     setError('');
 
-    const numAmount = parseFloat(amount) || 0;
+    const numAmount = Number(amount) || 0;
     if (numAmount <= 0) {
       setError('Nominal pembayaran harus lebih besar dari 0.');
       return;
@@ -101,15 +102,22 @@ export const PayDebtModal: React.FC<PayDebtModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-1">Nominal Bayar (Rp)</label>
-            <input
-              type="number"
+            <div className="flex justify-between items-center mb-1">
+              <label className="block text-xs font-bold text-slate-600">Nominal Bayar</label>
+              <button
+                type="button"
+                onClick={() => setAmount(String(debt.remaining_amount))}
+                className="text-[11px] font-bold text-amber-600 hover:text-amber-700 hover:underline"
+              >
+                Bayar Lunas
+              </button>
+            </div>
+            <RupiahInput
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(val) => setAmount(val ? String(val) : '')}
               placeholder="0"
-              max={debt.remaining_amount}
               required
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-lg font-bold text-slate-900 focus:border-indigo-500 outline-none"
+              size="lg"
             />
           </div>
 

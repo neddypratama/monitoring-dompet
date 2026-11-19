@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Budget, SavingsGoal, Category, Wallet as WalletType } from '../types';
 import { apiRequest, formatRupiah } from '../api/client';
+import { RupiahInput } from '../components/RupiahInput';
 import {
   Target,
   Plus,
@@ -76,7 +77,7 @@ export const BudgetsGoalsPage: React.FC = () => {
   const handleSaveBudget = async (e: React.FormEvent) => {
     e.preventDefault();
     setModalError('');
-    const num = parseFloat(monthlyLimit) || 0;
+    const num = Number(monthlyLimit) || 0;
     if (num <= 0) {
       setModalError('Batas anggaran harus lebih besar dari 0.');
       return;
@@ -115,7 +116,7 @@ export const BudgetsGoalsPage: React.FC = () => {
   const handleSaveGoal = async (e: React.FormEvent) => {
     e.preventDefault();
     setModalError('');
-    const num = parseFloat(goalTarget) || 0;
+    const num = Number(goalTarget) || 0;
     if (!goalName.trim() || num <= 0 || !goalDate) {
       setModalError('Semua field wajib diisi dengan benar.');
       return;
@@ -147,7 +148,7 @@ export const BudgetsGoalsPage: React.FC = () => {
   const handleDepositGoal = async (e: React.FormEvent) => {
     e.preventDefault();
     setModalError('');
-    const num = parseFloat(depositAmount) || 0;
+    const num = Number(depositAmount) || 0;
     if (!depositGoal || num <= 0) {
       setModalError('Nominal setoran harus lebih besar dari 0.');
       return;
@@ -463,15 +464,13 @@ export const BudgetsGoalsPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">Batas Maksimal Belanja (Rp / Bulan)</label>
-                <input
-                  type="number"
+                <label className="block text-xs font-bold text-slate-600 mb-1">Batas Maksimal Belanja (Per Bulan)</label>
+                <RupiahInput
                   value={monthlyLimit}
-                  onChange={(e) => setMonthlyLimit(e.target.value)}
-                  placeholder="misal: 1500000"
-                  min="1"
+                  onChange={(val) => setMonthlyLimit(val ? String(val) : '')}
+                  placeholder="0"
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-base font-bold focus:border-indigo-500 outline-none"
+                  size="md"
                 />
               </div>
 
@@ -528,15 +527,13 @@ export const BudgetsGoalsPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">Target Nominal (Rp)</label>
-                <input
-                  type="number"
+                <label className="block text-xs font-bold text-slate-600 mb-1">Target Nominal Tabungan</label>
+                <RupiahInput
                   value={goalTarget}
-                  onChange={(e) => setGoalTarget(e.target.value)}
+                  onChange={(val) => setGoalTarget(val ? String(val) : '')}
                   placeholder="0"
-                  min="1"
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-base font-bold focus:border-indigo-500 outline-none"
+                  size="md"
                 />
               </div>
 
@@ -611,15 +608,13 @@ export const BudgetsGoalsPage: React.FC = () => {
 
             <form onSubmit={handleDepositGoal} className="mt-4 space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">Nominal Setoran (Rp)</label>
-                <input
-                  type="number"
+                <label className="block text-xs font-bold text-slate-600 mb-1">Nominal Setoran</label>
+                <RupiahInput
                   value={depositAmount}
-                  onChange={(e) => setDepositAmount(e.target.value)}
+                  onChange={(val) => setDepositAmount(val ? String(val) : '')}
                   placeholder="0"
-                  min="1"
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-lg font-bold text-slate-900 focus:border-indigo-500 outline-none"
+                  size="lg"
                 />
               </div>
 

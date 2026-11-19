@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Wallet as WalletType } from '../types';
 import { apiRequest, formatRupiah } from '../api/client';
+import { RupiahInput } from './RupiahInput';
 import { X, ArrowRightLeft, AlertCircle, Loader2 } from 'lucide-react';
 
 interface TransferModalProps {
@@ -41,8 +42,8 @@ export const TransferModal: React.FC<TransferModalProps> = ({
   if (!isOpen) return null;
 
   const fromWallet = wallets.find((w) => w.id === fromId);
-  const numAmount = parseFloat(amount) || 0;
-  const numFee = parseFloat(adminFee) || 0;
+  const numAmount = Number(amount) || 0;
+  const numFee = Number(adminFee) || 0;
   const totalDeduction = numAmount + numFee;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -145,28 +146,24 @@ export const TransferModal: React.FC<TransferModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-1">Nominal Transfer (Rp)</label>
-            <input
-              type="number"
+            <label className="block text-xs font-bold text-slate-600 mb-1">Nominal Transfer</label>
+            <RupiahInput
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(val) => setAmount(val ? String(val) : '')}
               placeholder="0"
-              min="1"
               required
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-base font-bold text-slate-900 focus:border-indigo-500 outline-none"
+              size="lg"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1">Biaya Admin (Rp)</label>
-              <input
-                type="number"
+              <label className="block text-xs font-bold text-slate-600 mb-1">Biaya Admin</label>
+              <RupiahInput
                 value={adminFee}
-                onChange={(e) => setAdminFee(e.target.value)}
+                onChange={(val) => setAdminFee(val ? String(val) : '0')}
                 placeholder="0"
-                min="0"
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium focus:border-indigo-500 outline-none"
+                size="sm"
               />
             </div>
             <div>

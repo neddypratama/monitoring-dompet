@@ -3,6 +3,7 @@ import { Wallet as WalletType } from '../types';
 import { apiRequest, formatRupiah } from '../api/client';
 import { WalletCard } from '../components/WalletCard';
 import { TransferModal } from '../components/TransferModal';
+import { RupiahInput } from '../components/RupiahInput';
 import {
   Wallet,
   Plus,
@@ -116,7 +117,7 @@ export const WalletsPage: React.FC = () => {
             name: name.trim(),
             type,
             account_number: accountNumber.trim(),
-            balance: parseFloat(initialBalance) || 0,
+            balance: Number(initialBalance) || 0,
             color,
           }),
         });
@@ -306,15 +307,13 @@ export const WalletsPage: React.FC = () => {
               {!editingWallet && (
                 <div>
                   <label className="block text-xs font-bold text-slate-600 mb-1">
-                    Saldo Awal (Rp)
+                    Saldo Awal
                   </label>
-                  <input
-                    type="number"
+                  <RupiahInput
                     value={initialBalance}
-                    onChange={(e) => setInitialBalance(e.target.value)}
+                    onChange={(val) => setInitialBalance(val ? String(val) : '0')}
                     placeholder="0"
-                    min="0"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-bold focus:border-indigo-500 outline-none"
+                    size="md"
                   />
                 </div>
               )}

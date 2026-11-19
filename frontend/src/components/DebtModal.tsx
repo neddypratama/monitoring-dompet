@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { apiRequest } from '../api/client';
+import { RupiahInput } from './RupiahInput';
 import { X, CreditCard, AlertCircle, Loader2 } from 'lucide-react';
 
 interface DebtModalProps {
@@ -22,7 +23,7 @@ export const DebtModal: React.FC<DebtModalProps> = ({ isOpen, onClose, onSuccess
     e.preventDefault();
     setError('');
 
-    const numAmount = parseFloat(amount) || 0;
+    const numAmount = Number(amount) || 0;
     if (!creditorName.trim()) {
       setError('Nama pemberi pinjaman / lembaga wajib diisi.');
       return;
@@ -92,15 +93,13 @@ export const DebtModal: React.FC<DebtModalProps> = ({ isOpen, onClose, onSuccess
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-1">Nominal Hutang (Rp)</label>
-            <input
-              type="number"
+            <label className="block text-xs font-bold text-slate-600 mb-1">Nominal Hutang</label>
+            <RupiahInput
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(val) => setAmount(val ? String(val) : '')}
               placeholder="0"
-              min="1"
               required
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-lg font-bold text-slate-900 focus:border-indigo-500 outline-none"
+              size="lg"
             />
           </div>
 

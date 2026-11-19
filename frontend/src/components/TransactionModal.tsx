@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Wallet as WalletType, Category } from '../types';
 import { apiRequest } from '../api/client';
+import { RupiahInput } from './RupiahInput';
 import { X, PlusCircle, AlertCircle, Loader2 } from 'lucide-react';
 
 interface TransactionModalProps {
@@ -49,7 +50,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
     e.preventDefault();
     setError('');
 
-    const numAmount = parseFloat(amount) || 0;
+    const numAmount = Number(amount) || 0;
     if (numAmount <= 0) {
       setError('Nominal transaksi harus lebih besar dari 0.');
       return;
@@ -134,15 +135,13 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-1">Nominal (Rp)</label>
-            <input
-              type="number"
+            <label className="block text-xs font-bold text-slate-600 mb-1">Nominal Transaksi</label>
+            <RupiahInput
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(val) => setAmount(val ? String(val) : '')}
               placeholder="0"
-              min="1"
               required
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-lg font-bold text-slate-900 focus:border-indigo-500 outline-none"
+              size="lg"
             />
           </div>
 

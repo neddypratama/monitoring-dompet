@@ -1,6 +1,7 @@
 import React from 'react';
 import { ReceiptItem } from '../types';
 import { formatRupiah } from '../api/client';
+import { RupiahInput } from './RupiahInput';
 import { Trash2, User, UserCheck } from 'lucide-react';
 
 interface ReceiptItemRowProps {
@@ -86,12 +87,11 @@ export const ReceiptItemRow: React.FC<ReceiptItemRowProps> = ({
 
         <div>
           <label className="block text-[10px] font-bold text-slate-400 uppercase">Harga Kotor</label>
-          <input
-            type="number"
+          <RupiahInput
             value={item.raw_price}
-            onChange={(e) => handlePriceChange(parseFloat(e.target.value) || 0)}
-            min="0"
-            className="w-full mt-0.5 px-2.5 py-1.5 rounded-lg border border-slate-200 font-semibold focus:border-indigo-500 outline-none"
+            onChange={(val) => handlePriceChange(val)}
+            size="sm"
+            wrapperClassName="mt-0.5"
           />
         </div>
 

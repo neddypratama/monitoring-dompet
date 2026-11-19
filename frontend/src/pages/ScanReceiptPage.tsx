@@ -4,6 +4,7 @@ import { Wallet as WalletType, ReceiptItem } from '../types';
 import { apiRequest } from '../api/client';
 import { ReceiptItemRow } from '../components/ReceiptItemRow';
 import { SplitSummaryModal } from '../components/SplitSummaryModal';
+import { RupiahInput } from '../components/RupiahInput';
 import {
   Camera,
   Sparkles,
@@ -312,60 +313,56 @@ export const ScanReceiptPage: React.FC<ScanReceiptPageProps> = ({ onNavigate }) 
             {/* Price Components */}
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
               <div>
-                <label className="block text-[10px] font-bold text-slate-400 uppercase">Subtotal Kotor</label>
-                <input
-                  type="number"
+                <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Subtotal Kotor</label>
+                <RupiahInput
                   value={rawSubtotal}
-                  onChange={(e) => {
-                    const val = parseFloat(e.target.value) || 0;
+                  onChange={(val) => {
                     setRawSubtotal(val);
                     recalculateItems(items, val, totalPaid);
                   }}
-                  className="w-full mt-1 px-3 py-1.5 rounded-xl border border-slate-200 font-bold outline-none"
+                  size="sm"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-emerald-600 uppercase">Diskon Voucher</label>
-                <input
-                  type="number"
+                <label className="block text-[10px] font-bold text-emerald-600 uppercase mb-1">Diskon Voucher</label>
+                <RupiahInput
                   value={discountAmount}
-                  onChange={(e) => setDiscountAmount(parseFloat(e.target.value) || 0)}
-                  className="w-full mt-1 px-3 py-1.5 rounded-xl border border-slate-200 font-bold text-emerald-700 outline-none"
+                  onChange={(val) => setDiscountAmount(val)}
+                  size="sm"
+                  className="text-emerald-700 font-bold"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-slate-400 uppercase">Ongkir</label>
-                <input
-                  type="number"
+                <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Ongkir</label>
+                <RupiahInput
                   value={deliveryFee}
-                  onChange={(e) => setDeliveryFee(parseFloat(e.target.value) || 0)}
-                  className="w-full mt-1 px-3 py-1.5 rounded-xl border border-slate-200 font-semibold outline-none"
+                  onChange={(val) => setDeliveryFee(val)}
+                  size="sm"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-slate-400 uppercase">Pajak / Biaya</label>
-                <input
-                  type="number"
+                <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Pajak / Biaya</label>
+                <RupiahInput
                   value={serviceTaxFee}
-                  onChange={(e) => setServiceTaxFee(parseFloat(e.target.value) || 0)}
-                  className="w-full mt-1 px-3 py-1.5 rounded-xl border border-slate-200 font-semibold outline-none"
+                  onChange={(val) => setServiceTaxFee(val)}
+                  size="sm"
                 />
               </div>
 
               <div className="col-span-2 sm:col-span-1">
-                <label className="block text-[10px] font-extrabold text-indigo-700 uppercase">Total Akhir Bayar</label>
-                <input
-                  type="number"
+                <label className="block text-[10px] font-extrabold text-indigo-700 uppercase mb-1">Total Akhir Bayar</label>
+                <RupiahInput
                   value={totalPaid}
-                  onChange={(e) => {
-                    const val = parseFloat(e.target.value) || 0;
+                  onChange={(val) => {
                     setTotalPaid(val);
                     recalculateItems(items, rawSubtotal, val);
                   }}
-                  className="w-full mt-1 px-3 py-1.5 rounded-xl border-2 border-indigo-500 font-extrabold text-indigo-900 outline-none"
+                  size="sm"
+                  wrapperClassName="border-2 border-indigo-500"
+                  className="font-extrabold text-indigo-900"
                 />
               </div>
             </div>
