@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Buku Panduan Pengguna (Manual Book) — DompetKu</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+    @page {
+      size: A4;
+      margin: 15mm 15mm 20mm 15mm;
+      @bottom-right {
+        content: counter(page);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 9pt;
+        color: #94a3b8;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      color: #1e293b;
+      line-height: 1.6;
+      font-size: 10pt;
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+    }
+
+    /* Cover Header */
+    .cover {
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #1e293b 100%);
+      color: #ffffff;
+      padding: 32px 28px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 25px -5px rgba(30, 27, 75, 0.25);
+    }
+
+    .cover-badge {
+      display: inline-block;
+      background: rgba(99, 102, 241, 0.35);
+      border: 1px solid rgba(165, 180, 252, 0.4);
+      color: #c7d2fe;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 8pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+
+    .cover h1 {
+      margin: 0 0 6px 0;
+      font-size: 24pt;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+    }
+
+    .cover p.subtitle {
+      margin: 0;
+      font-size: 10.5pt;
+      color: #cbd5e1;
+      font-weight: 400;
+      max-width: 90%;
+    }
+
+    .cover-meta {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      justify-content: space-between;
+      font-size: 8.5pt;
+      color: #94a3b8;
+    }
+
+    /* Headings */
+    h2 {
+      color: #0f172a;
+      font-size: 14pt;
+      font-weight: 800;
+      margin-top: 24px;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #e2e8f0;
+      page-break-after: avoid;
+    }
+
+    h3 {
+      color: #334155;
+      font-size: 11.5pt;
+      font-weight: 700;
+      margin-top: 16px;
+      margin-bottom: 6px;
+      page-break-after: avoid;
+    }
+
+    h4 {
+      color: #475569;
+      font-size: 10pt;
+      font-weight: 700;
+      margin-top: 12px;
+      margin-bottom: 4px;
+    }
+
+    p {
+      margin: 0 0 8px 0;
+      color: #334155;
+    }
+
+    ul, ol {
+      margin: 0 0 12px 0;
+      padding-left: 20px;
+      color: #334155;
+    }
+
+    li {
+      margin-bottom: 4px;
+    }
+
+    /* Cards & Callouts */
+    .callout {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #6366f1;
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin: 12px 0;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      color: #1e1b4b;
+      margin-bottom: 4px;
+      font-size: 9.5pt;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin: 12px 0;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      padding: 12px;
+      border-radius: 8px;
+    }
+
+    .card-title {
+      font-weight: 700;
+      color: #0f172a;
+      font-size: 9.5pt;
+      margin-bottom: 4px;
+    }
+
+    .card-desc {
+      font-size: 8.5pt;
+      color: #64748b;
+      margin: 0;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 7.5pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-purple { background: #f3e8ff; color: #7e22ce; }
+    .badge-blue { background: #e0e7ff; color: #3730a3; }
+    .badge-green { background: #dcfce7; color: #15803d; }
+    .badge-amber { background: #fef3c7; color: #b45309; }
+    .badge-red { background: #fee2e2; color: #b91c1c; }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 8.5pt;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #475569;
+      font-weight: 700;
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid #cbd5e1;
+    }
+
+    td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+    }
+
+    tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    code {
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      background: #f1f5f9;
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-size: 8.5pt;
+      color: #475569;
+    }
+
+    .quote-box {
+      background: #ecfdf5;
+      border-left: 4px solid #10b981;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-style: italic;
+      color: #065f46;
+      margin: 8px 0;
+      font-size: 9pt;
+    }
+
+    .page-break {
+      page-break-before: always;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 24px;
+      padding-top: 12px;
+      border-top: 1px solid #e2e8f0;
+      font-size: 8pt;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cover Header -->
+  <div class="cover">
+    <div class="cover-badge">Buku Panduan Resmi</div>
+    <h1>DompetKu</h1>
+    <p class="subtitle">Panduan Penggunaan Lengkap Aplikasi Monitoring Keuangan Pribadi, Pengingat Hutang/Piutang &amp; Split Bill Struk Multi-AI</p>
+    <div class="cover-meta">
+      <div>Versi: 1.0.0 (Edisi Produksi)</div>
+      <div>Platform: Web (Laragon Apache / cPanel / Cloud)</div>
+      <div>Diperbarui: November 2026</div>
+    </div>
+  </div>
+
+  <!-- 1. Mengenal DompetKu -->
+  <h2>1. Mengenal DompetKu</h2>
+  <p><strong>DompetKu</strong> adalah aplikasi pencatatan keuangan modern yang menggabungkan kesederhanaan manajemen dompet dengan kecerdasan buatan (Multi-AI Vision). Dirancang khusus untuk memecahkan kerumitan pelacakan arus kas pribadi dan patungan bareng teman.</p>
+  
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title">👛 Manajemen Multi-Dompet</div>
+      <p class="card-desc">Pisahkan saldo uang tunai fisik, rekening bank (BCA, Mandiri, BRI), dan e-wallet (GoPay, OVO, ShopeePay) dengan mutasi yang transparan.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">🧾 Scan Struk AI &amp; Split Bill</div>
+      <p class="card-desc">Scan struk belanjaan minimarket &amp; pesanan makanan dengan Google Gemini / Groq. Pajak &amp; promo dibagi proporsional dengan selisih Rp 0.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">⏰ Pengingat Hutang &amp; Piutang</div>
+      <p class="card-desc">Hutang dilengkapi jatuh tempo &amp; badge urgensi visual. Piutang teman dilengkapi generator pesan WhatsApp 1-klik yang sopan.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">🛡️ Sistem Peran &amp; Audit Log</div>
+      <p class="card-desc">Hak akses Admin dan User terpisah. Dilengkapi audit log lengkap untuk keamanan dan monitoring kesehatan platform.</p>
+    </div>
+  </div>
+
+  <!-- 2. Akses & Autentikasi -->
+  <h2>2. Akses &amp; Autentikasi Akun</h2>
+  <div class="callout">
+    <div class="callout-title">🔑 Akun Bawaan Administrator</div>
+    <p>Ketika sistem pertama kali dipasang, akun bawaan admin sudah tersedia:</p>
+    <p><strong>Username:</strong> <code>admin</code> &nbsp;|&nbsp; <strong>Password:</strong> <code>admin123</code> &nbsp;|&nbsp; <strong>Role:</strong> <span class="badge badge-purple">Admin</span></p>
+  </div>
+
+  <h3>2.1. Pendaftaran Akun Pengguna Baru (User)</h3>
+  <ol>
+    <li>Pada halaman Login, klik tombol <strong>"Daftar Akun Baru"</strong>.</li>
+    <li>Masukkan <strong>Nama Lengkap</strong>, <strong>Username</strong> (huruf kecil &amp; angka, 3–32 karakter), dan <strong>Password</strong> (minimal 6 karakter).</li>
+    <li>Klik <strong>Daftar Akun</strong>. Anda akan langsung masuk ke Dashboard dengan peran <span class="badge badge-blue">User</span>.</li>
+  </ol>
+
+  <!-- 3. Modul Dashboard Finansial -->
+  <h2>3. Modul Finansial</h2>
+
+  <h3>3.1. Dashboard Utama &amp; Indikator Arus Kas</h3>
+  <p>Dashboard menampilkan ringkasan performa finansial berdasarkan periode yang dapat disesuaikan (Hari Ini, Minggu Ini, Bulan Ini, Bulan Lalu, Tahun Ini, atau Kustom):</p>
+  <ul>
+    <li><strong>Total Saldo Dompet:</strong> Akumulasi seluruh uang yang Anda miliki di semua dompet aktif.</li>
+    <li><strong>Total Pemasukan:</strong> Pendapatan operasional murni (gaji, bisnis, bonus, investasi).</li>
+    <li><strong>Total Pengeluaran:</strong> Pengeluaran belanja kebutuhan pribadi Anda.</li>
+    <li><strong>Arus Kas Bersih (Net Cashflow):</strong> Selisih pendapatan dikurangi pengeluaran. <em>(Catatan: pembayaran hutang atau talangan teman tidak merusak angka arus kas operasional Anda)</em>.</li>
+  </ul>
+
+  <div class="page-break"></div>
+
+  <h3>3.2. Manajemen Dompet &amp; Rekening</h3>
+  <p>DompetKu mendukung berbagai jenis penyimpanan dana. Saldo dapat dipindahkan antar-dompet secara instan:</p>
+  <ul>
+    <li><strong>Tambah Dompet:</strong> Tentukan Nama, Jenis (Tunai, Bank, e-Wallet), Nomor Rekening/HP, Saldo Awal, dan Warna Ikon.</li>
+    <li><strong>Transfer Antar Dompet:</strong> Mendukung kalkulasi biaya admin transfer bank (misal Rp 2.500) atau biaya top-up (misal Rp 1.000). Saldo terpotong rapi dan biaya admin tercatat otomatis sebagai pengeluaran.</li>
+  </ul>
+
+  <h3>3.3. Pencatatan Transaksi &amp; Filter Data</h3>
+  <p>Catat transaksi harian secara cepat dengan kategori yang jelas (Makanan, Belanja, Transportasi, Tagihan, Hiburan, dll.). Dilengkapi pencarian kata kunci dan penyaringan berdasarkan dompet, tipe mutasi, dan tanggal.</p>
+
+  <!-- 4. Hutang & Piutang -->
+  <h2>4. Pengingat Hutang &amp; Piutang Teman</h2>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title">🔴 Hutang (Kewajiban Anda)</div>
+      <p class="card-desc">Wajib menyertakan <strong>Tanggal Jatuh Tempo</strong>. Sistem memberikan penanda urgensi:</p>
+      <ul>
+        <li><span class="badge badge-green">Aman</span>: Jatuh tempo &gt; 3 hari lagi.</li>
+        <li><span class="badge badge-amber">Segera</span>: Jatuh tempo 1–3 hari ke depan.</li>
+        <li><span class="badge badge-red">Hari Ini</span>: Wajib dibayar hari ini.</li>
+        <li><span class="badge badge-red">Terlewat</span>: Sudah melewati batas jatuh tempo.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">🟢 Piutang (Talangan Teman)</div>
+      <p class="card-desc">Uang Anda yang dipinjam atau hasil talangan split bill. Tidak memerlukan jatuh tempo.</p>
+      <p class="card-desc"><strong>Salin Format WhatsApp 1-Klik:</strong> Klik tombol WA pada kartu piutang untuk menghasilkan pesan sopan:</p>
+      <div class="quote-box">
+        "Halo [Teman]! Mau ingetin patungan [Nama Toko] sebesar Rp [Nominal]. Bisa ditransfer ya, terima kasih banyak! 🙏"
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Scan Struk AI -->
+  <h2>5. Scan Struk AI &amp; Split Bill Cerdas (Fitur Unggulan)</h2>
+  <p>Fitur inovatif untuk memecahkan struk belanja minimarket (Alfamart, Indomaret) atau makanan bareng (ShopeeFood, GrabFood, Resto):</p>
+  
+  <ol>
+    <li><strong>Unggah Foto Struk:</strong> Ambil foto struk fisik atau unggah tangkapan layar pemesanan online.</li>
+    <li><strong>Pilih AI Vision Provider:</strong> Pilih model AI yang Anda sukai (Google Gemini 2.5 Flash, Groq Llama 3.2 Vision, OpenAI GPT-4o-mini).</li>
+    <li><strong>Ekstraksi Otomatis:</strong> AI membaca nama toko, item belanjaan, harga satuan, diskon promo, ongkos kirim, dan pajak restoran secara otomatis.</li>
+    <li><strong>Tandai Pemilik Menu:</strong> Pada setiap baris menu, pilih apakah milik <strong>Pribadi</strong> atau ketik nama teman yang memesan.</li>
+    <li><strong>Kalkulasi Proporsional (Hamilton-Hare Largest Remainder):</strong> Diskon promo dan pajak restoran dibagi secara adil dan proporsional sesuai nominal pesanan masing-masing. <strong>Total pembagian dijamin selisih tepat Rp 0,-</strong>.</li>
+    <li><strong>Eksekusi Seketika:</strong>
+      <ul>
+        <li>Dompet Anda terpotong sesuai total bayar di kasir.</li>
+        <li>Porsi makan Anda otomatis masuk ke pengeluaran pribadi.</li>
+        <li>Porsi teman otomatis masuk ke daftar <strong>Piutang Teman</strong>.</li>
+      </ul>
+    </li>
+  </ol>
+
+  <!-- 6. Anggaran & Tabungan -->
+  <h2>6. Anggaran &amp; Target Tabungan</h2>
+  <ul>
+    <li><strong>Anggaran Bulanan (Budgeting):</strong> Batasi pengeluaran per kategori per bulan (misal: <em>Makanan: Rp 1.500.000</em>). Progress bar visual memberi tahu jika belanja Anda mulai mendekati batas atau melebihi limit.</li>
+    <li><strong>Target Tabungan (Savings Goals):</strong> Buat target tabungan masa depan (misal: <em>Dana Darurat Rp 10.000.000</em>). Alokasikan dana tabungan langsung dari dompet pilihan Anda.</li>
+  </ul>
+
+  <!-- 7. Panel Administrator -->
+  <h2>7. Panel Administrator (Khusus Admin)</h2>
+  <p>Sebagai Administrator platform, Anda dapat mengelola seluruh pengguna dan sistem:</p>
+  <ul>
+    <li><strong>Statistik Platform:</strong> Memantau total akun terdaftar, akun aktif, total transaksi global, dan volume perputaran uang di sistem.</li>
+    <li><strong>Manajemen Pengguna:</strong> Melihat daftar pengguna, mengangkat user menjadi Admin, menurunkan Admin menjadi User, serta mengaktifkan/menonaktifkan akun.</li>
+    <li><strong>Audit Log Aktivitas:</strong> Rekaman transparan aksi keamanan sistem (login berhasil/gagal, pendaftaran, dan pengubahan wewenang) lengkap dengan IP Address dan waktu.</li>
+  </ul>
+
+  <!-- 8. Pengaturan & Backup -->
+  <h2>8. Pengaturan &amp; Backup Data</h2>
+  <ul>
+    <li><strong>Konfigurasi Kunci AI:</strong> Masukkan API key Google Gemini (gratis di <a href="https://aistudio.google.com/">aistudio.google.com</a>) atau Groq. Kunci disimpan aman dan terenkripsi.</li>
+    <li><strong>Ekspor Seluruh Data JSON:</strong> Unduh salinan cadangan lengkap seluruh data dompet, transaksi, hutang, piutang, dan struk belanja Anda dengan 1 klik.</li>
+  </ul>
+
+  <div class="footer-note">
+    &copy; 2026 DompetKu — Solusi Monitoring Keuangan &amp; Split Bill Multi-AI. Dokumen ini dicetak secara otomatis.
+  </div>
+
+</body>
+</html>
